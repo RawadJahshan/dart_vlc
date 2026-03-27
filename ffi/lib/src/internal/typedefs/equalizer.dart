@@ -1,7 +1,7 @@
 import 'dart:ffi';
 
 /// Struct received from C with equalizer data.
-class EqualizerStruct extends Struct {
+final class EqualizerStruct extends Struct {
   @Int32()
   external int id;
 
