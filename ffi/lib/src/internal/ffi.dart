@@ -115,6 +115,21 @@ abstract class PlayerFFI {
   static final PlayerSetHWNDDart setHWND = dynamicLibrary
       .lookup<NativeFunction<PlayerSetHWNDCXX>>('PlayerSetHWND')
       .asFunction();
+
+  static final PlayerGetSubtitleTracksDart getSubtitleTracks = dynamicLibrary
+      .lookup<NativeFunction<PlayerGetSubtitleTracksCXX>>(
+          'PlayerGetSubtitleTracks')
+      .asFunction();
+
+  static final PlayerGetSubtitleTrackDart getSubtitleTrack = dynamicLibrary
+      .lookup<NativeFunction<PlayerGetSubtitleTrackCXX>>(
+          'PlayerGetSubtitleTrack')
+      .asFunction();
+
+  static final PlayerSetSubtitleTrackDart setSubtitleTrack = dynamicLibrary
+      .lookup<NativeFunction<PlayerSetSubtitleTrackCXX>>(
+          'PlayerSetSubtitleTrack')
+      .asFunction();
 }
 
 abstract class MediaFFI {

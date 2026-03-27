@@ -31,6 +31,15 @@ struct DeviceList {
   std::vector<Device> devices;
 };
 
+struct SubtitleTrackList {
+  // The subtitle tracks that gets exposed to Dart.
+  DartSubtitleTrackList dart_object;
+
+  // Previousing data.
+  std::vector<DartSubtitleTrackList::Track> track_infos;
+  std::vector<std::pair<int32_t, std::string>> tracks;
+};
+
 struct Equalizer {
   // The equalizer that gets exposed to Dart.
   DartEqualizer dart_object;
@@ -352,6 +361,53 @@ int32_t PlayerGetAudioTrackCount(int32_t id) {
     player = g_players->Get(id);
   }
   return player->GetAudioTrackCount();
+}
+
+
+DartSubtitleTrackList* PlayerGetSubtitleTracks(Dart_Handle object, int32_t id) {
+  auto player = g_players->Get(id);
+  if (!player) {
+    g_players->Create(
+        id, std::move(std::make_unique<Player>(std::vector<std::string>{})));
+    player = g_players->Get(id);
+  }
+
+  auto wrapper = new DartObjects::SubtitleTrackList();
+  wrapper->tracks = player->GetSubtitleTracks();
+
+  for (const auto& [track_id, track_name] : wrapper->tracks) {
+    wrapper->track_infos.emplace_back(track_id, track_name.c_str());
+  }
+
+  wrapper->dart_object.size = wrapper->track_infos.size();
+  wrapper->dart_object.tracks = wrapper->track_infos.data();
+
+  Dart_NewFinalizableHandle_DL(
+      object, wrapper, sizeof(*wrapper),
+      static_cast<Dart_HandleFinalizer>(DartObjects::DestroyObject));
+  return &wrapper->dart_object;
+}
+
+int32_t PlayerGetSubtitleTrack(int32_t id) {
+  auto player = g_players->Get(id);
+  if (!player) {
+    g_players->Create(
+        id, std::move(std::make_unique<Player>(std::vector<std::string>{})));
+    player = g_players->Get(id);
+  }
+
+  return player->GetSubtitleTrack();
+}
+
+void PlayerSetSubtitleTrack(int32_t id, int32_t track) {
+  auto player = g_players->Get(id);
+  if (!player) {
+    g_players->Create(
+        id, std::move(std::make_unique<Player>(std::vector<std::string>{})));
+    player = g_players->Get(id);
+  }
+
+  player->SetSubtitleTrack(track);
 }
 
 void PlayerSetHWND(int32_t id, int64_t hwnd) {

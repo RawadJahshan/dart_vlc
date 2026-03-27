@@ -20,6 +20,8 @@
 
 #include <functional>
 
+#include <vlc/libvlc_media_player.h>
+
 Player::Player(const std::vector<std::string>& cmd_arguments) {
   if (cmd_arguments.empty()) {
     vlc_instance_ = VLC::Instance(0, nullptr);
@@ -263,6 +265,34 @@ void Player::SetAudioTrack(int32_t track) {
 
 int32_t Player::GetAudioTrackCount() {
   return vlc_media_player_.audioTrackCount();
+}
+
+std::vector<std::pair<int32_t, std::string>> Player::GetSubtitleTracks() {
+  std::vector<std::pair<int32_t, std::string>> tracks;
+  auto* descriptions =
+      libvlc_video_get_spu_description(vlc_media_player_.get());
+  auto* current = descriptions;
+  while (current != nullptr) {
+    if (current->i_id >= 0) {
+      tracks.emplace_back(current->i_id,
+                          current->psz_name != nullptr
+                              ? std::string(current->psz_name)
+                              : std::string("Subtitle"));
+    }
+    current = current->p_next;
+  }
+  if (descriptions != nullptr) {
+    libvlc_track_description_list_release(descriptions);
+  }
+  return tracks;
+}
+
+int32_t Player::GetSubtitleTrack() {
+  return libvlc_video_get_spu(vlc_media_player_.get());
+}
+
+void Player::SetSubtitleTrack(int32_t track) {
+  libvlc_video_set_spu(vlc_media_player_.get(), track);
 }
 
 void Player::SetHWND(int64_t hwnd) {

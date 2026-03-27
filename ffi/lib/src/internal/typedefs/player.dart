@@ -64,3 +64,25 @@ typedef PlayerGetAudioTrackCountCXX = Int32 Function(Int32 id);
 typedef PlayerGetAudioTrackCountDart = int Function(int id);
 typedef PlayerSetHWNDCXX = Int32 Function(Int32 id, Int64 hwnd);
 typedef PlayerSetHWNDDart = int Function(int id, int hwnd);
+
+
+final class SubtitleTrackStruct extends Struct {
+  @Int32()
+  external int id;
+  external Pointer<Utf8> name;
+}
+
+final class SubtitleTrackList extends Struct {
+  @Int32()
+  external int size;
+  external Pointer<SubtitleTrackStruct> tracks;
+}
+
+typedef PlayerGetSubtitleTracksCXX = Pointer<SubtitleTrackList> Function(
+    Handle object, Int32 id);
+typedef PlayerGetSubtitleTracksDart = Pointer<SubtitleTrackList> Function(
+    Object object, int id);
+typedef PlayerGetSubtitleTrackCXX = Int32 Function(Int32 id);
+typedef PlayerGetSubtitleTrackDart = int Function(int id);
+typedef PlayerSetSubtitleTrackCXX = Void Function(Int32 id, Int32 track);
+typedef PlayerSetSubtitleTrackDart = void Function(int id, int track);

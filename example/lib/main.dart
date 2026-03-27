@@ -44,6 +44,8 @@ class PrimaryScreenState extends State<PrimaryScreen> {
   TextEditingController metasController = TextEditingController();
   double bufferingProgress = 0.0;
   Media? metadataCurrentMedia;
+  List<SubtitleTrack> subtitleTracks = <SubtitleTrack>[];
+  int subtitleTrack = -1;
 
   @override
   void initState() {
@@ -51,6 +53,7 @@ class PrimaryScreenState extends State<PrimaryScreen> {
     if (mounted) {
       player.currentStream.listen((value) {
         setState(() => current = value);
+        _refreshSubtitleTracks();
       });
       player.positionStream.listen((value) {
         setState(() => position = value);
@@ -78,6 +81,26 @@ class PrimaryScreenState extends State<PrimaryScreen> {
       equalizer.setBandAmp(31.25, 10.0);
       player.setEqualizer(equalizer);
     }
+  }
+
+  Future<void> _refreshSubtitleTracks() async {
+    final tracks = player.subtitleTracks;
+    final currentSubtitleTrack = player.subtitleTrack;
+    if (!mounted) return;
+    setState(() {
+      subtitleTracks = tracks;
+      subtitleTrack = currentSubtitleTrack;
+    });
+  }
+
+  Future<void> _setSubtitleTrack(int track) async {
+    await player.setSubtitleTrack(track);
+    await _refreshSubtitleTracks();
+  }
+
+  Future<void> _disableSubtitleTrack() async {
+    await player.disableSubtitleTrack();
+    await _refreshSubtitleTracks();
   }
 
   @override
@@ -300,6 +323,48 @@ class PrimaryScreenState extends State<PrimaryScreen> {
                       ),
                     ),
                   ),
+                  Card(
+                    elevation: 2.0,
+                    margin: const EdgeInsets.all(4.0),
+                    child: Container(
+                      margin: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Subtitle tracks (libVLC SPU).'),
+                          const Divider(height: 12.0),
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: _refreshSubtitleTracks,
+                                child: const Text('Refresh Subtitles'),
+                              ),
+                              const SizedBox(width: 12.0),
+                              ElevatedButton(
+                                onPressed: _disableSubtitleTrack,
+                                child: const Text('Disable Subtitles'),
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 12.0),
+                          Text('Current subtitle track id: $subtitleTrack'),
+                          const Divider(height: 8.0),
+                          ...subtitleTracks.map((track) => ListTile(
+                                dense: true,
+                                title: Text(
+                                  '[${track.id}] ${track.name}',
+                                  style: const TextStyle(fontSize: 14.0),
+                                ),
+                                trailing: ElevatedButton(
+                                  onPressed: () => _setSubtitleTrack(track.id),
+                                  child: const Text('Select'),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+
                   Card(
                     elevation: 2.0,
                     margin: const EdgeInsets.all(4.0),
