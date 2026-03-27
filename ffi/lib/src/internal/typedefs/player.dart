@@ -62,6 +62,22 @@ typedef PlayerSetAudioTrackCXX = Void Function(Int32 id, Int32 index);
 typedef PlayerSetAudioTrackDart = void Function(int id, int index);
 typedef PlayerGetAudioTrackCountCXX = Int32 Function(Int32 id);
 typedef PlayerGetAudioTrackCountDart = int Function(int id);
+final class AudioTrackStruct extends Struct {
+  @Int32()
+  external int id;
+  external Pointer<Utf8> name;
+}
+
+final class AudioTrackList extends Struct {
+  @Int32()
+  external int size;
+  external Pointer<AudioTrackStruct> tracks;
+}
+
+typedef PlayerGetAudioTracksCXX = Pointer<AudioTrackList> Function(
+    Handle object, Int32 id);
+typedef PlayerGetAudioTracksDart = Pointer<AudioTrackList> Function(
+    Object object, int id);
 typedef PlayerSetHWNDCXX = Int32 Function(Int32 id, Int64 hwnd);
 typedef PlayerSetHWNDDart = int Function(int id, int hwnd);
 
