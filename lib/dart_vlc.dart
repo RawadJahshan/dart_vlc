@@ -27,6 +27,7 @@ import 'package:dart_vlc/src/widgets/video.dart';
 import 'package:dart_vlc_ffi/src/internal/ffi.dart' as ffi;
 import 'package:dart_vlc_ffi/dart_vlc_ffi.dart' as ffi;
 export 'package:dart_vlc_ffi/dart_vlc_ffi.dart' hide DartVLC, Player;
+export 'package:dart_vlc_ffi/src/player.dart' show AudioTrack;
 export 'package:dart_vlc/src/widgets/video.dart';
 
 /// A [Player] to open & play a [Media] or [Playlist] from file, network or asset.

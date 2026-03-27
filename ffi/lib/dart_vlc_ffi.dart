@@ -17,6 +17,7 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 export 'package:dart_vlc_ffi/src/player.dart';
+export 'package:dart_vlc_ffi/src/player.dart' show AudioTrack;
 export 'package:dart_vlc_ffi/src/equalizer.dart';
 export 'package:dart_vlc_ffi/src/broadcast.dart';
 export 'package:dart_vlc_ffi/src/chromecast.dart';
