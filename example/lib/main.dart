@@ -45,6 +45,7 @@ class PrimaryScreenState extends State<PrimaryScreen> {
   double bufferingProgress = 0.0;
   Media? metadataCurrentMedia;
   List<SubtitleTrack> subtitleTracks = <SubtitleTrack>[];
+  List<AudioTrack> audioTracks = <AudioTrack>[];
   int subtitleTrack = -1;
 
   @override
@@ -359,6 +360,35 @@ class PrimaryScreenState extends State<PrimaryScreen> {
                                   onPressed: () => _setSubtitleTrack(track.id),
                                   child: const Text('Select'),
                                 ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Card(
+                    elevation: 2.0,
+                    margin: const EdgeInsets.all(4.0),
+                    child: Container(
+                      margin: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Audio tracks.'),
+                          Row(children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                final tracks = player.audioTracks;
+                                print(
+                                    '[Audio] tracks: ${tracks.map((t) => '${t.id}:${t.name}').toList()}');
+                                setState(() => audioTracks = tracks);
+                              },
+                              child: Text('Refresh Audio Tracks'),
+                            ),
+                          ]),
+                          Text('Audio tracks count: ${audioTracks.length}'),
+                          ...audioTracks.map((t) => ListTile(
+                                title: Text('${t.id}: ${t.name}'),
+                                onTap: () => player.setAudioTrack(t.id),
                               )),
                         ],
                       ),
