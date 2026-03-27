@@ -6,6 +6,19 @@ import 'package:dart_vlc_ffi/dart_vlc_ffi.dart';
 import 'package:dart_vlc_ffi/src/internal/ffi.dart';
 
 /// Represents dimensions of a video.
+class SubtitleTrack {
+  /// ID of the subtitle track as provided by libVLC SPU APIs.
+  final int id;
+
+  /// Human-readable subtitle track name.
+  final String name;
+
+  const SubtitleTrack(this.id, this.name);
+
+  @override
+  String toString() => "SubtitleTrack($id, $name)";
+}
+
 class VideoDimensions {
   /// Width of the video.
   final int width;
@@ -409,6 +422,39 @@ class Player {
     // for some reason this value returns 0 when no tracks exists
     // and 2 or more if there's 1 or more audio tracks for this [MediaSource].
     return count > 1 ? count - 1 : count;
+  }
+
+
+
+  /// Gets subtitle tracks from current [MediaSource].
+  List<SubtitleTrack> get subtitleTracks {
+    final tracksPtr = PlayerFFI.getSubtitleTracks(this, id);
+    List<SubtitleTrack> tracks = <SubtitleTrack>[];
+    for (int i = 0; i < tracksPtr.ref.size; i++) {
+      final subtitleTrackPtr = tracksPtr.ref.tracks.elementAt(i);
+      tracks.add(
+        SubtitleTrack(
+          subtitleTrackPtr.ref.id,
+          subtitleTrackPtr.ref.name.toDartString(),
+        ),
+      );
+    }
+    return tracks;
+  }
+
+  /// Gets currently selected subtitle track id from current [MediaSource].
+  int get subtitleTrack {
+    return PlayerFFI.getSubtitleTrack(id);
+  }
+
+  /// Sets current subtitle track id for the current [MediaSource].
+  Future<void> setSubtitleTrack(int track) async {
+    PlayerFFI.setSubtitleTrack(id, track);
+  }
+
+  /// Disables subtitles for the current [MediaSource].
+  Future<void> disableSubtitleTrack() async {
+    PlayerFFI.setSubtitleTrack(id, -1);
   }
 
   void setHWND(int hwnd) {

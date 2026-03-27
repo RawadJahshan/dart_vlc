@@ -21,6 +21,8 @@
 
 #include <memory>
 #include <optional>
+#include <string>
+#include <utility>
 #include <vector>
 #include <vlcpp/vlc.hpp>
 
@@ -94,6 +96,12 @@ class Player {
   void SetAudioTrack(int32_t track);
 
   int32_t GetAudioTrackCount();
+
+  std::vector<std::pair<int32_t, std::string>> GetSubtitleTracks();
+
+  int32_t GetSubtitleTrack();
+
+  void SetSubtitleTrack(int32_t track);
 
   void SetHWND(int64_t hwnd);
 
