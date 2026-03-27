@@ -267,6 +267,26 @@ int32_t Player::GetAudioTrackCount() {
   return vlc_media_player_.audioTrackCount();
 }
 
+std::vector<std::pair<int32_t, std::string>> Player::GetAudioTracks() {
+  std::vector<std::pair<int32_t, std::string>> tracks;
+  auto* descriptions =
+      libvlc_audio_get_track_description(vlc_media_player_.get());
+  auto* current = descriptions;
+  while (current != nullptr) {
+    if (current->i_id >= 0) {
+      tracks.emplace_back(current->i_id,
+                          current->psz_name != nullptr
+                              ? std::string(current->psz_name)
+                              : std::string("Audio"));
+    }
+    current = current->p_next;
+  }
+  if (descriptions != nullptr) {
+    libvlc_track_description_list_release(descriptions);
+  }
+  return tracks;
+}
+
 std::vector<std::pair<int32_t, std::string>> Player::GetSubtitleTracks() {
   std::vector<std::pair<int32_t, std::string>> tracks;
   auto* descriptions =

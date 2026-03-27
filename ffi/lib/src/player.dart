@@ -5,6 +5,20 @@ import 'package:ffi/ffi.dart';
 import 'package:dart_vlc_ffi/dart_vlc_ffi.dart';
 import 'package:dart_vlc_ffi/src/internal/ffi.dart';
 
+/// Represents an audio track.
+class AudioTrack {
+  /// ID of the audio track as provided by libVLC audio APIs.
+  final int id;
+
+  /// Human-readable audio track name.
+  final String name;
+
+  const AudioTrack(this.id, this.name);
+
+  @override
+  String toString() => "AudioTrack($id, $name)";
+}
+
 /// Represents dimensions of a video.
 class SubtitleTrack {
   /// ID of the subtitle track as provided by libVLC SPU APIs.
@@ -424,7 +438,21 @@ class Player {
     return count > 1 ? count - 1 : count;
   }
 
-
+  /// Gets audio tracks from current [MediaSource].
+  List<AudioTrack> get audioTracks {
+    final tracksPtr = PlayerFFI.getAudioTracks(this, id);
+    List<AudioTrack> tracks = <AudioTrack>[];
+    for (int i = 0; i < tracksPtr.ref.size; i++) {
+      final audioTrackPtr = tracksPtr.ref.tracks.elementAt(i);
+      tracks.add(
+        AudioTrack(
+          audioTrackPtr.ref.id,
+          audioTrackPtr.ref.name.toDartString(),
+        ),
+      );
+    }
+    return tracks;
+  }
 
   /// Gets subtitle tracks from current [MediaSource].
   List<SubtitleTrack> get subtitleTracks {

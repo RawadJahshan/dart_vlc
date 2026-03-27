@@ -97,6 +97,8 @@ class Player {
 
   int32_t GetAudioTrackCount();
 
+  std::vector<std::pair<int32_t, std::string>> GetAudioTracks();
+
   std::vector<std::pair<int32_t, std::string>> GetSubtitleTracks();
 
   int32_t GetSubtitleTrack();

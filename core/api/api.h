@@ -51,6 +51,17 @@ struct DartSubtitleTrackList {
   const Track* tracks;
 };
 
+struct DartAudioTrackList {
+  struct Track {
+    int32_t id;
+    const char* name;
+    explicit Track(int32_t id, const char* name) : id(id), name(name) {}
+  };
+
+  int32_t size;
+  const Track* tracks;
+};
+
 struct DartEqualizer {
   int32_t id;
   float pre_amp;
@@ -113,6 +124,9 @@ DLLEXPORT void PlayerTakeSnapshot(int32_t id, const char* file_path,
 DLLEXPORT void PlayerSetAudioTrack(int32_t id, int32_t track);
 
 DLLEXPORT int32_t PlayerGetAudioTrackCount(int32_t id);
+
+DLLEXPORT DartAudioTrackList* PlayerGetAudioTracks(Dart_Handle object,
+                                                   int32_t id);
 
 DLLEXPORT void PlayerSetHWND(int32_t id, int64_t hwnd);
 

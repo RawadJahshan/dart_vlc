@@ -40,6 +40,15 @@ struct SubtitleTrackList {
   std::vector<std::pair<int32_t, std::string>> tracks;
 };
 
+struct AudioTrackList {
+  // The audio tracks that gets exposed to Dart.
+  DartAudioTrackList dart_object;
+
+  // Previousing data.
+  std::vector<DartAudioTrackList::Track> track_infos;
+  std::vector<std::pair<int32_t, std::string>> tracks;
+};
+
 struct Equalizer {
   // The equalizer that gets exposed to Dart.
   DartEqualizer dart_object;
@@ -361,6 +370,30 @@ int32_t PlayerGetAudioTrackCount(int32_t id) {
     player = g_players->Get(id);
   }
   return player->GetAudioTrackCount();
+}
+
+DartAudioTrackList* PlayerGetAudioTracks(Dart_Handle object, int32_t id) {
+  auto player = g_players->Get(id);
+  if (!player) {
+    g_players->Create(
+        id, std::move(std::make_unique<Player>(std::vector<std::string>{})));
+    player = g_players->Get(id);
+  }
+
+  auto wrapper = new DartObjects::AudioTrackList();
+  wrapper->tracks = player->GetAudioTracks();
+
+  for (const auto& [track_id, track_name] : wrapper->tracks) {
+    wrapper->track_infos.emplace_back(track_id, track_name.c_str());
+  }
+
+  wrapper->dart_object.size = wrapper->track_infos.size();
+  wrapper->dart_object.tracks = wrapper->track_infos.data();
+
+  Dart_NewFinalizableHandle_DL(
+      object, wrapper, sizeof(*wrapper),
+      static_cast<Dart_HandleFinalizer>(DartObjects::DestroyObject));
+  return &wrapper->dart_object;
 }
 
 
