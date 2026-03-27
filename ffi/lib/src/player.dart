@@ -438,22 +438,6 @@ class Player {
     return count > 1 ? count - 1 : count;
   }
 
-  /// Gets audio tracks from current [MediaSource].
-  List<AudioTrack> get audioTracks {
-    final tracksPtr = PlayerFFI.getAudioTracks(this, id);
-    List<AudioTrack> tracks = <AudioTrack>[];
-    for (int i = 0; i < tracksPtr.ref.size; i++) {
-      final audioTrackPtr = tracksPtr.ref.tracks.elementAt(i);
-      tracks.add(
-        AudioTrack(
-          audioTrackPtr.ref.id,
-          audioTrackPtr.ref.name.toDartString(),
-        ),
-      );
-    }
-    return tracks;
-  }
-
   /// Gets subtitle tracks from current [MediaSource].
   List<SubtitleTrack> get subtitleTracks {
     final tracksPtr = PlayerFFI.getSubtitleTracks(this, id);
@@ -464,6 +448,22 @@ class Player {
         SubtitleTrack(
           subtitleTrackPtr.ref.id,
           subtitleTrackPtr.ref.name.toDartString(),
+        ),
+      );
+    }
+    return tracks;
+  }
+
+  /// Gets audio tracks from current [MediaSource].
+  List<AudioTrack> get audioTracks {
+    final tracksPtr = PlayerFFI.getAudioTracks(this, id);
+    List<AudioTrack> tracks = <AudioTrack>[];
+    for (int i = 0; i < tracksPtr.ref.size; i++) {
+      final audioTrackPtr = tracksPtr.ref.tracks.elementAt(i);
+      tracks.add(
+        AudioTrack(
+          audioTrackPtr.ref.id,
+          audioTrackPtr.ref.name.toDartString(),
         ),
       );
     }
